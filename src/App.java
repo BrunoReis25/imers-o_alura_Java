@@ -1,4 +1,6 @@
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -19,25 +21,34 @@ public class App {
         HttpRequest request = HttpRequest.newBuilder(endereco).GET().build();
         HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
         String body = response.body();
-        System.out.println(body);
 
         //Pegar só os dados que interessam (titulo, poster, classificação)
         JsonParser parser = new JsonParser();
         List<Map<String, String>> listaDeFilmes = parser.parse(body);
-        System.out.println(listaDeFilmes.size());
 
         //Exibir e manipular os dados
+        var geradora = new GeradoraDeFigurinhas();
         for(Map<String, String> filme : listaDeFilmes) {
-            System.out.println("\u001b[1m Nome:\u001b[m " + filme.get("title"));
-            System.out.println("\u001b[1m Poster:\u001b[m " + filme.get("image"));
-            System.out.println("\u001b[105;1m Classificação:\u001b[m " + filme.get("imDbRating"));
-            
-            //Classificação em formato de estrelas
+
+            String urlImage = filme.get("image");
+            String titulo = filme.get("title");
+
+            InputStream inputStream = new URL(urlImage).openStream();
+            String nomeArquivo = titulo + ".png";
+
+            geradora.cria(inputStream, nomeArquivo);
+
+            System.out.println("\u001b[1m Nome:\u001b[m " + titulo);
+            System.out.println("\u001b[1m Poster:\u001b[m " + urlImage);
+            System.out.print("\u001b[105;1m Classificação:\u001b[m ");
+
+            //Classificação em formato de estrelas (Desafio)
             var nota = Double.parseDouble(filme.get("imDbRating"));
-            for(int i = 0; i < Math.floor(nota); i++) {
-                System.out.print("\uD83D\uDC99");
+            for(int i = 0; i < Math.floor(nota/2); i++) {
+                System.out.print("\u2B50");
             }
-            System.out.println("");
+
+            System.out.println();
         }
             
     }
