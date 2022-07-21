@@ -1,6 +1,12 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.font.FontRenderContext;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -13,7 +19,6 @@ public class GeradoraDeFigurinhas {
       public void cria(InputStream inputStream, String nomeArquivo) throws Exception {
 
             //leitura da imagem
-            // InputStream inputStream = new URL("https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIzLWFmNTEtODM1ZmRlYWMwMWFmXkEyXkFqcGdeQXVyMTMxODk2OTU@.jpg").openStream();
             BufferedImage imagemOriginal = ImageIO.read(inputStream);
 
             //cria nova imagem em memória com transparência e com tamanho novo
@@ -28,15 +33,35 @@ public class GeradoraDeFigurinhas {
 
             graphics.drawImage(imagemOriginal, 0, 0, null);
 
-            Font fonte = new Font(Font.SANS_SERIF, Font.BOLD, 64);
-            graphics.setColor(Color.YELLOW);
+            //escrever uma frase (centralizada) na nova imagem
+
+            Font fonte = new Font("Comic Sans MS", Font.BOLD, 64);
             graphics.setFont(fonte);
 
-            //escrever uma frase na nova imagem
-            graphics.drawString("TOPZERA", 130, novaAltura - 100);
+            String frase = "TOPZERA";
+            FontMetrics tamanhoFonte = graphics.getFontMetrics();
+            int posicaox = largura/2 - tamanhoFonte.stringWidth(frase)/2;
+            int posicaoy = novaAltura - (100 - tamanhoFonte.getHeight());
+
+            FontRenderContext fontRenderContext = graphics.getFontRenderContext();
+            var textLayout = new TextLayout(frase, fonte, fontRenderContext);
+            
+            Shape outline = textLayout.getOutline(null);
+            AffineTransform transform = graphics.getTransform();
+            transform.translate(posicaox, posicaoy);
+            graphics.setTransform(transform);
+
+            var outlineStroke = new BasicStroke(largura * 0.004166f);
+            graphics.setStroke(outlineStroke);
+            
+            graphics.fill(outline);
+            graphics.setColor(Color.BLACK);
+            graphics.draw(outline);
+            graphics.setClip(outline);
 
             //escrever a nova imagem em um arquivo
-            ImageIO.write(novaImage, "png", new File("saida/" + nomeArquivo));
+            String saida = "saida/" + nomeArquivo;
+            ImageIO.write(novaImage, "png", new File(saida));
 
       }
 }

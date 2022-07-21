@@ -10,6 +10,14 @@ import java.util.Map;
 import java.util.Properties;
 
 public class App {
+
+    public static String recuperaImagemMaior(String url){
+
+        String[] partesEndereco = url.split("._");
+
+        return partesEndereco[0] + ".jpg";
+    } 
+
     public static void main(String[] args) throws Exception {
 
         Properties prop = ArquivoProperties.getProp();
@@ -26,17 +34,30 @@ public class App {
         JsonParser parser = new JsonParser();
         List<Map<String, String>> listaDeFilmes = parser.parse(body);
 
+        //Pegar as imagens em tamanho maior
+        for(Map<String,String> filme : listaDeFilmes){
+            var imagemMaior = recuperaImagemMaior(filme.get("image")); 
+            filme.replace("image", imagemMaior);
+        }
+            
         //Exibir e manipular os dados
         var geradora = new GeradoraDeFigurinhas();
-        for(Map<String, String> filme : listaDeFilmes) {
+        int cont = 0;
+        for(Map<String,String> filme : listaDeFilmes) {
 
             String urlImage = filme.get("image");
             String titulo = filme.get("title");
 
+            
+
             InputStream inputStream = new URL(urlImage).openStream();
             String nomeArquivo = titulo + ".png";
 
-            geradora.cria(inputStream, nomeArquivo);
+            try{
+                geradora.cria(inputStream, nomeArquivo);
+            } catch  (Exception e){
+                System.out.println("Não foi possível usar essa imagem!");
+            }
 
             System.out.println("\u001b[1m Nome:\u001b[m " + titulo);
             System.out.println("\u001b[1m Poster:\u001b[m " + urlImage);
@@ -49,6 +70,11 @@ public class App {
             }
 
             System.out.println();
+            System.out.println();
+
+            if(cont++ == 10){
+                break;
+            }
         }
             
     }
