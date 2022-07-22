@@ -41,7 +41,7 @@ public class GeradoraDeFigurinhas {
             String frase = "TOPZERA";
             FontMetrics tamanhoFonte = graphics.getFontMetrics();
             int posicaox = largura/2 - tamanhoFonte.stringWidth(frase)/2;
-            int posicaoy = novaAltura - (100 - tamanhoFonte.getHeight());
+            int posicaoy = novaAltura - (200 - tamanhoFonte.getAscent())/2;
 
             FontRenderContext fontRenderContext = graphics.getFontRenderContext();
             var textLayout = new TextLayout(frase, fonte, fontRenderContext);
@@ -54,6 +54,7 @@ public class GeradoraDeFigurinhas {
             var outlineStroke = new BasicStroke(largura * 0.004166f);
             graphics.setStroke(outlineStroke);
             
+            graphics.setColor(Color.YELLOW);
             graphics.fill(outline);
             graphics.setColor(Color.BLACK);
             graphics.draw(outline);
