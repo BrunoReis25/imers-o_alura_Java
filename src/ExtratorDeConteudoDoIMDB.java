@@ -18,8 +18,9 @@ public class ExtratorDeConteudoDoIMDB implements ExtratorDeConteudo {
                   String titulo = atributos.get("title");
                   //Extrai imagem maior
                   String urlImagem = atributos.get("image").replaceAll("(@+)(.*).jpg$", "$1.jpg");
-                   
-                  var conteudo = new Conteudo(titulo, urlImagem);
+                  String ranting = atributos.get("imDbRating");
+                  
+                  var conteudo = new Conteudo(titulo, urlImagem, ranting);
 
                   conteudos.add(conteudo);
             }

@@ -18,7 +18,7 @@ public class ExtratorDeConteudoDaNasa implements ExtratorDeConteudo {
                   String titulo = atributos.get("title");
                   String urlImagem = atributos.get("url");
                    
-                  var conteudo = new Conteudo(titulo, urlImagem);
+                  var conteudo = new Conteudo(titulo, urlImagem, null);
 
                   conteudos.add(conteudo);
             }
